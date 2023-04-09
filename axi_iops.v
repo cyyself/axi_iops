@@ -7,11 +7,11 @@ module my_LFSR #(
     output [LEN_BITS-1:0]   out
 );
 
-logic xnor_result;
-logic [LEN_BITS:1] lfsr;
+reg xnor_result;
+reg [LEN_BITS:1] lfsr;
 
 // https://docs.xilinx.com/v/u/en-US/xapp052
-always_comb begin : xnor_result_gen
+always @(*) begin
     case (LEN_BITS)
          3: xnor_result = lfsr[ 3] ^~ lfsr[ 2];
          4: xnor_result = lfsr[ 4] ^~ lfsr[ 3];
@@ -51,7 +51,7 @@ always_comb begin : xnor_result_gen
     endcase
 end
 
-always_ff @(posedge clock) begin
+always @(posedge clock) begin
     if (reset) lfsr <= SEED;
     else lfsr <= {lfsr[LEN_BITS-1:1],xnor_result};
 end
@@ -110,7 +110,7 @@ reg [31:0] io_count_out;
 
 assign iocount_period = io_count_out;
 
-always_ff @(posedge clock) begin : counting
+always @(posedge clock) begin : counting
     if (reset) begin
         timestamp <= 0;
         io_count <= 0;
@@ -128,7 +128,7 @@ always_ff @(posedge clock) begin : counting
     end
 end
 
-logic [ADDR_LEN-1:0] lfsr_out;
+wire [ADDR_LEN-1:0] lfsr_out;
 
 my_LFSR #(
     .SEED(LFSR_INIT),
@@ -152,7 +152,7 @@ assign axi_arsize = arsize;
 assign axi_arburst = 2'b01; // INCR
 assign axi_arvalid = arvalid;
 
-always_ff @(posedge clock) begin
+always @(posedge clock) begin
     if (reset) begin
         arid <= 0;
         araddr <= 0;
