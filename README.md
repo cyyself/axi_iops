@@ -1,6 +1,6 @@
 # AXI-IOPS
 
-A simple RTL code to test AXI IOPS.
+A simple RTL code to benchmark AXI IOPS.
 
 ## Reference
 
